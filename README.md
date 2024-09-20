@@ -9,8 +9,6 @@
 - [Dependencias](#dependencias)
 - [Uso](#uso)
 
-  - [api_proxy/](#api_proxy)
-
 
 ## Descripción del Proyecto
 
