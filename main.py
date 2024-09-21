@@ -61,8 +61,8 @@ async def validar_permisos(ip:str,path:str,method:str):
 
                     
     lista_await = await asyncio.gather(*resultados) # ejecuta las funciones de manera asincrona 
-    
-    if False in lista_await: #si alguna de las funciones dio como resultado falso es porque no cumple con las reglas de validacion del config.py
+    lista_await_unzip = [item for sublista in lista_await for item in sublista]
+    if False in lista_await_unzip: #si alguna de las funciones dio como resultado falso es porque no cumple con las reglas de validacion del config.py
         return False,", ".join(descripcion)
                    
                     

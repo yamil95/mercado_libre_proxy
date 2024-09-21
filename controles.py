@@ -2,8 +2,44 @@
 from datetime import datetime
 from config import reglas
 import re
+import asyncio
 
-async def controlar_tiempo (map):
+async def incrementar_cantidad (map:dict,tiempo_actual=datetime.now()):
+    map["tiempo_ultima_request"]= tiempo_actual
+    map["cantidad"] += 1
+    return True
+
+async def chequear_cantidad(map:dict):
+    diferencia = await chequear_diferencia(map)
+    if diferencia >= map["tiempo_de_espera"]: 
+            map["cantidad"]= 1
+            map["tiempo_ultima_request"]=None
+            return True
+    else:
+        return False
+    
+async def resetear_cantidad (map:dict):
+    map["cantidad"]= 1
+    map["tiempo_ultima_request"]=None
+    return True
+
+async def chequear_tiempo_y_cantidad (map:dict,tiempo_actual = datetime.now()):
+    if map["cantidad"] == map["limite"]:
+        map["tiempo_ultima_request"] = tiempo_actual
+        return False
+    else:
+        map["cantidad"] += 1
+        return True
+
+async def chequear_diferencia (map:dict,tiempo_actual=datetime.now()):
+    tiempo_ultima_request = None if map["tiempo_ultima_request"] == None else map["tiempo_ultima_request"]
+    if tiempo_ultima_request != None:
+        diferencia = tiempo_actual - tiempo_ultima_request
+        diferencia = diferencia.seconds
+        return diferencia
+    return None
+
+async def controlar_tiempo (map:dict):
     """
     Proposito: 
     Esta funcion recibe como parametro el diccionario de configuracion de la regla de configuracion que fue encontrada
@@ -29,45 +65,17 @@ async def controlar_tiempo (map):
     Returns:
         True o False
     """
-    tiempo_actual = datetime.now()
-    tiempo_ultima_request = None if map["tiempo_ultima_request"] == None else map["tiempo_ultima_request"]
-    
-    if tiempo_ultima_request != None:
-        diferencia = tiempo_actual - tiempo_ultima_request
-        diferencia = diferencia.seconds
-   
-    if map["cantidad"] < map["limite"] and map["tiempo_ultima_request"] == None:
-        
-            map["tiempo_ultima_request"]= tiempo_actual
-            map["cantidad"] += 1
-            return True
-    
-    elif map["cantidad"] == map["limite"]:
-        if diferencia >= map["tiempo_de_espera"]: 
-            map["cantidad"]= 1
-            map["tiempo_ultima_request"]=None
-            return True
-        else:
-            return False
-    
-    elif diferencia > map["tiempo"]  and map["cantidad"] < map["limite"]:
-        map["cantidad"]= 1
-        map["tiempo_ultima_request"]=None
-        return True
 
+    diferencia = await chequear_diferencia(map)
     
-    elif diferencia < map["tiempo"] and map["cantidad"] <= map["limite"]:
-            
-        if map["cantidad"] == map["limite"]:
-            map["tiempo_ultima_request"] = tiempo_actual
-            return False
-        else:
-            map["cantidad"] += 1
-            return True
-    else:
-        return False
-        
-                                    
+    lista_de_control = [(map["cantidad"] < map["limite"] and map["tiempo_ultima_request"] == None,incrementar_cantidad),
+                        (map["cantidad"] == map["limite"],chequear_cantidad),
+                        (diferencia != None and diferencia > map["tiempo"]  and map["cantidad"] < map["limite"],resetear_cantidad),
+                        (diferencia != None and diferencia < map["tiempo"] and map["cantidad"] <= map["limite"],chequear_tiempo_y_cantidad)
+                        ]
+   
+    chequeos = [funcion(map) for condicion, funcion in lista_de_control if condicion]
+    return await asyncio.gather(*chequeos) if chequeos else False
 
 async def chequear_ip_path (ip:str,path):
     """
