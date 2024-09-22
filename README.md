@@ -31,8 +31,10 @@ El proxy asegura que cualquier intento de exceder las reglas definidas resulte e
 ## Estructura del Repositorio
 
 - `config.py/`: Contiene la lógica principal del proxy, incluyendo las reglas de limitación y el manejo de las solicitudes entrantes.
-- `controles.py`: Contiene las funciones para hacer los distintos chequeos por ip , path o combinacion (ip,path)
+- `controles/controles.py`: Contiene las funciones para hacer los distintos chequeos por ip , path o combinacion (ip,path)
 - `requirements.txt`: Lista de dependencias del proyecto.
+- `app/main.py`: Contiene los endpoints para las redirecciones a las apis.
+- `app/test`: Contiene los tests unitarios de cada funcion validadora .
 
 ## Instalación y Configuración
 
@@ -87,7 +89,7 @@ Esto redirige la solicitud a "https://dolarapi.com/v1/dolares/blue".
 
 - **Prueba con API argentina.datos**:
     ```sh
-    curl http://192.168.1.43:8000/feriados/{año}
+    curl http://192.168.1.43:8000/categorias/{MLA3530}
     ```
 Esto redirige la solicitud a ""https://api.argentinadatos.com/v1/feriados/2024".
 

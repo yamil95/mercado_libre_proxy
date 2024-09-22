@@ -10,6 +10,7 @@ venv
 # Directorios
 __pycache__/
 .vscode
+.env
 *.py[cod]
 *$py.class
 #Cache

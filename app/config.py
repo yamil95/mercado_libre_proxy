@@ -2,7 +2,7 @@
 reglas={
     "ip":[{
             "method": "GET",
-            "limite": 7,
+            "limite": 15,
             "cantidad":0,
             "tiempo":100,
             "tiempo_de_espera":130,
@@ -18,7 +18,7 @@ reglas={
             "tiempo":120,
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
-            "ips" : ["192.168.1.36"],
+            "ips" : ["192.168.1.49"],
             "path":"/",
 
     
@@ -26,12 +26,12 @@ reglas={
     ],
 "path":[{
             "method": "GET",
-            "limite": 5,
+            "limite": 15,
             "cantidad":0,
             "tiempo":60,
             "tiempo_de_espera":90,
             "tiempo_ultima_request":None,
-            "path" : "/dolar_blue/",
+            "path" : "/categorias/",
             "regex":"*",
 
     
@@ -61,7 +61,7 @@ reglas={
                         "tiempo":200,
                         "tiempo_de_espera":90,
                         "tiempo_ultima_request":None,
-                        "path":'/cotizaciones/',
+                        "path":'/items/',
                         "regex":"*",
                         "ips" : ["192.168.1.36"],
                     
@@ -70,14 +70,14 @@ reglas={
                 
                     {
                         "method": "GET",
-                        "limite": 7,
+                        "limite": 5,
                         "cantidad":0,
                         "tiempo":100,
                         "tiempo_de_espera":120,
                         "tiempo_ultima_request":None,
                         "path":"/categorias/",
                         "regex":"*",
-                        "ips" : ["192.168.1.40"],
+                        "ips" : ["192.168.1.36"],
                 
             },
 
