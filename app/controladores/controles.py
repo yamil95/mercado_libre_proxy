@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from config import reglas
+from app.config import reglas
 import re
 import asyncio
 
@@ -23,7 +23,7 @@ async def resetear_cantidad (map:dict):
     map["tiempo_ultima_request"]=None
     return True
 
-async def chequear_tiempo_y_cantidad (map:dict,tiempo_actual = datetime.now()):
+async def chequear_cantidad_y_limite (map:dict,tiempo_actual = datetime.now()):
     if map["cantidad"] == map["limite"]:
         map["tiempo_ultima_request"] = tiempo_actual
         return False
@@ -71,7 +71,7 @@ async def controlar_tiempo (map:dict):
     lista_de_control = [(map["cantidad"] < map["limite"] and map["tiempo_ultima_request"] == None,incrementar_cantidad),
                         (map["cantidad"] == map["limite"],chequear_cantidad),
                         (diferencia != None and diferencia > map["tiempo"]  and map["cantidad"] < map["limite"],resetear_cantidad),
-                        (diferencia != None and diferencia < map["tiempo"] and map["cantidad"] <= map["limite"],chequear_tiempo_y_cantidad)
+                        (diferencia != None and diferencia < map["tiempo"] and map["cantidad"] <= map["limite"],chequear_cantidad_y_limite)
                         ]
    
     chequeos = [funcion(map) for condicion, funcion in lista_de_control if condicion]
