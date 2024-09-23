@@ -63,7 +63,7 @@ reglas={
                         "tiempo_ultima_request":None,
                         "path":'/cotizaciones/',
                         "regex":"*",
-                        "ips" : ["192.168.1.36"],
+                        "ips" : ["192.168.1.39"],
                     
                 
                  },
