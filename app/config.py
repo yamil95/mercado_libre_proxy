@@ -1,8 +1,33 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+token = os.getenv("TOKEN")
+endpoints= {
+    "/categorias/{valor}":{"url":"https://api.mercadolibre.com/categories/{}",
+                           "header": {
+                           'Authorization': f'Bearer {token}'
+                            }
+        },
+    "/tipos/{valor}":{"url":"https://api.mercadolibre.com/sites/MLA/listing_types/{}",
+                           "header": {
+                           'Authorization': f'Bearer {token}'
+                            }
+        },
+    "/cotizaciones/{valor}":{"url":"https://dolarapi.com/v1/cotizaciones/{}",
+                           "header": {}
+        },
+    "/dolares/{valor}":{"url":"https://dolarapi.com/v1/dolares/{}",
+                           "header": {}
+        },
+    
+    
+    }
 
 reglas={
     "ip":[{
             "method": "GET",
-            "limite": 19,
+            "limite": 15,
             "cantidad":0,
             "tiempo":100,
             "tiempo_de_espera":130,

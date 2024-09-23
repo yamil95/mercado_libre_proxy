@@ -11,8 +11,7 @@ from fastapi import FastAPI, Request,HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse
 from fastapi import Request, HTTPException
-from dotenv import load_dotenv
-load_dotenv()
+from app.config import endpoints
 
 app = FastAPI()
 
@@ -101,95 +100,21 @@ async def rate_limit_middleware(request: Request, call_next):
 
 
 
-@app.get("/dolar_blue")
-async def dolar_blue (request: Request):
+def crear_endpoint_dinamicamente(url="",header={}):
     
-    async with httpx.AsyncClient() as client:
+    async def endpoint(valor:str):
+        async with httpx.AsyncClient() as client:
         
-        try:
-            
-            response = await client.get("https://dolarapi.com/v1/dolares/blue")  # Llamada a la API externa
-            response.raise_for_status() 
-            data = response.json()  
-            return JSONResponse(content=data)  
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            try:
+                response = await client.get(url.format(valor),headers= header)  # Llamada a la API externa
+                response.raise_for_status() 
+                data = response.json()  
+                return JSONResponse(content=data)  
+            except httpx.HTTPStatusError as exc:
+                raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str(e))
+    return endpoint
 
-@app.get("/dolar_mep")
-async def dolar_bolsa (request: Request):
-    
-    async with httpx.AsyncClient() as client:
-    
-        try:
-            
-            response = await client.get("https://dolarapi.com/v1/dolares/bolsa")  # Llamada a la API externa
-            response.raise_for_status() 
-            data = response.json()  
-            return JSONResponse(content=data)  
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/cotizaciones/{valor}")
-async def cotizaciones (request:Request,valor:str):
-    
-    async with httpx.AsyncClient() as client:
-    
-        try:
-            
-            response = await client.get(f"https://dolarapi.com/v1/cotizaciones/{valor}")  # Llamada a la API externa
-            response.raise_for_status() 
-            data = response.json()  
-            return JSONResponse(content=data)  
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/tipos/{valor}")
-async def feriados (request:Request,valor:str):
-    token = os.getenv("TOKEN")
-    async with httpx.AsyncClient() as client:
-    
-        try:
-            headers = {
-                'Authorization': f'Bearer {token}'
-                }
-            #aca no pude probar el response de la api xq me olvide la clave de mi mail de MELI y tuve que cambiar mi mail y tarda 24hs
-            # en validar mi identidad :P
-            # asi que no pude obtener el token para autenticarme a la api pero la funcion de control del proxy funciona correctamente
-            response = await client.get(f"https://api.mercadolibre.com/sites/MLA/listing_types/{valor}",headers= headers)  # Llamada a la API externa
-            response.raise_for_status() 
-            data = response.json()  
-            return JSONResponse(content=data)  
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-
-
-@app.get("/categorias/{valor}")
-async def feriados (request:Request,valor:str):
-    token = os.getenv("TOKEN")
-    async with httpx.AsyncClient() as client:
-    
-        try:
-            headers = {
-                'Authorization': f'Bearer {token}'
-                }
-            #aca no pude probar el response de la api xq me olvide la clave de mi mail de MELI y tuve que cambiar mi mail y tarda 24hs
-            # en validar mi identidad :P
-            # asi que no pude obtener el token para autenticarme a la api pero la funcion de control del proxy funciona correctamente
-            response = await client.get(f"https://api.mercadolibre.com/categories/{valor}",headers= headers)  # Llamada a la API externa
-            response.raise_for_status() 
-            data = response.json()  
-            return JSONResponse(content=data)  
-        except httpx.HTTPStatusError as exc:
-            raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+for path,parametros in endpoints.items():
+    app.add_api_route(path, crear_endpoint_dinamicamente(**parametros),methods=["GET"])
