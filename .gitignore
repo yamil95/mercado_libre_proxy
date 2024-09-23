@@ -1,8 +1,6 @@
 #Entorno virtual
 venv
 
-
-
 # Archivos compilados de Python
 *.py[cod]
 *$py.class

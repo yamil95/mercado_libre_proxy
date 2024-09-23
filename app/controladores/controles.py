@@ -71,7 +71,7 @@ async def controlar_tiempo (map:dict):
     lista_de_control = [(map["cantidad"] < map["limite"] and map["tiempo_ultima_request"] == None,incrementar_cantidad),
                         (map["cantidad"] == map["limite"],chequear_cantidad),
                         (diferencia != None and diferencia > map["tiempo"]  and map["cantidad"] < map["limite"],resetear_cantidad),
-                        (diferencia != None and diferencia < map["tiempo"] and map["cantidad"] <= map["limite"],chequear_cantidad_y_limite)
+                        (diferencia != None and diferencia < map["tiempo"] and map["cantidad"] < map["limite"],chequear_cantidad_y_limite)
                         ]
    
     chequeos = [funcion(map) for condicion, funcion in lista_de_control if condicion]

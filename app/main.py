@@ -149,7 +149,7 @@ async def cotizaciones (request:Request,valor:str):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/items/{valor}")
+@app.get("/tipos/{valor}")
 async def feriados (request:Request,valor:str):
     token = os.getenv("TOKEN")
     async with httpx.AsyncClient() as client:
@@ -161,7 +161,7 @@ async def feriados (request:Request,valor:str):
             #aca no pude probar el response de la api xq me olvide la clave de mi mail de MELI y tuve que cambiar mi mail y tarda 24hs
             # en validar mi identidad :P
             # asi que no pude obtener el token para autenticarme a la api pero la funcion de control del proxy funciona correctamente
-            response = await client.get(f"https://api.mercadolibre.com/items/{valor}",headers= headers)  # Llamada a la API externa
+            response = await client.get(f"https://api.mercadolibre.com/sites/MLA/listing_types/{valor}",headers= headers)  # Llamada a la API externa
             response.raise_for_status() 
             data = response.json()  
             return JSONResponse(content=data)  
