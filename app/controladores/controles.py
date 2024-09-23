@@ -90,14 +90,14 @@ async def chequear_ip_path (ip:str,path):
     Returns:
         True,dict or False,dict:  
     """
-    for reglas_de_validacion in reglas["ip_path"]["validaciones"]:
+    for reglas_de_validacion in reglas["ip_path"]:
         
         path_regla=reglas_de_validacion["path"]
         regex= reglas_de_validacion["regex"]
         patron = path_regla+regex
         patron = re.compile(patron)
         match_path = patron.match(path)
-        if ip in reglas_de_validacion["ips"] and match_path != None:
+        if ip == reglas_de_validacion["ip"] and match_path != None:
             return True,reglas_de_validacion
         
     return False,{}
@@ -118,7 +118,7 @@ async def chequear_ip (ip:str):
         True,dict o False,dict : en caso valido retorna el diccionario de configuracion asociado a la ip que esta en el config.py
     """
     for reglas_ip in reglas["ip"]:
-        if ip in reglas_ip["ips"]:
+        if ip == reglas_ip["ip"]:
             return True,reglas_ip
     return False,{}
 

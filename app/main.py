@@ -11,7 +11,7 @@ from fastapi import FastAPI, Request,HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse
 from fastapi import Request, HTTPException
-from app.config import endpoints
+from app.config import endpoints,lista_de_ips_permitidas
 
 app = FastAPI()
 
@@ -88,15 +88,18 @@ async def rate_limit_middleware(request: Request, call_next):
     path = path.path + path.query
     method = request.method
 
+    if client_ip in lista_de_ips_permitidas:
     #llamo a la funcion de validar permisos
-    resultado,descripcion = await validar_permisos(client_ip,path,method) #asyncio.create_task (validar_permisos(client_ip,path,method) )
+        resultado,descripcion = await validar_permisos(client_ip,path,method) #asyncio.create_task (validar_permisos(client_ip,path,method) )
     
-    if resultado:
-        response = await call_next(request)
-        return response
+        if resultado:
+            response = await call_next(request)
+            return response
+        else:
+            return JSONResponse(status_code=429,content= {"error":descripcion})
     else:
-        return JSONResponse(status_code=429,content= {"error":descripcion})
-
+        return JSONResponse(status_code=500,content= {"IP":"No valida"})
+        
 
 
 

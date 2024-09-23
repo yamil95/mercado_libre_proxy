@@ -3,6 +3,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 token = os.getenv("TOKEN")
+#categorias/ML3530
+#tipos/free
+#tipos/gold_special
+#cotizaciones/uyu
+#cotizaciones/eur
+#dolares/mep
+#dolares/blue
+
 endpoints= {
     "/categorias/{valor}":{"url":"https://api.mercadolibre.com/categories/{}",
                            "header": {
@@ -32,18 +40,18 @@ reglas={
             "tiempo":100,
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
-            "ips" : ["127.0.0.1"],
+            "ip" : "127.0.0.1",
             "path":"/",
 
     
      },{
             "method": "GET",
-            "limite": 18,
+            "limite": 10,
             "cantidad":0,
             "tiempo":120,
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
-            "ips" : ["192.168.1.36"],
+            "ip" : "192.168.1.36",
             "path":"/",
 
     
@@ -51,12 +59,12 @@ reglas={
     ],
 "path":[{
             "method": "GET",
-            "limite": 15,
+            "limite": 11,
             "cantidad":0,
             "tiempo":60,
             "tiempo_de_espera":90,
             "tiempo_ultima_request":None,
-            "path" : "/dolar_blue/",
+            "path" : "/dolares/",
             "regex":"*",
 
     
@@ -75,40 +83,39 @@ reglas={
     }
     ],
 
-"ip_path":{
+"ip_path":[ 
+        {
+            "method": "GET",
+            "limite": 2,
+            "cantidad":0,
+            "tiempo":200,
+            "tiempo_de_espera":90,
+            "tiempo_ultima_request":None,
+            "path":'/cotizaciones/',
+            "regex":"*",
+            "ip" : "192.168.1.36",
+        
     
+        },
     
-                "validaciones":[
-                    {
-                        "method": "GET",
-                        "limite": 10,
-                        "cantidad":0,
-                        "tiempo":200,
-                        "tiempo_de_espera":90,
-                        "tiempo_ultima_request":None,
-                        "path":'/cotizaciones/',
-                        "regex":"*",
-                        "ips" : ["192.168.1.39"],
-                    
-                
-                 },
-                
-                    {
-                        "method": "GET",
-                        "limite": 5,
-                        "cantidad":0,
-                        "tiempo":100,
-                        "tiempo_de_espera":120,
-                        "tiempo_ultima_request":None,
-                        "path":"/categorias/",
-                        "regex":"*",
-                        "ips" : ["192.168.1.36"],
-                
-            },
+        {
+            "method": "GET",
+            "limite": 5,
+            "cantidad":0,
+            "tiempo":100,
+            "tiempo_de_espera":120,
+            "tiempo_ultima_request":None,
+            "path":"/categorias/",
+            "regex":"*",
+            "ip" : "192.168.1.36",
+    
+    },
 
-        ]
- }
-    
-    
+        
+]
     
 }
+
+lista_de_ips_permitidas= [reglas["ip"],reglas["ip_path"]]
+lista_de_ips_permitidas = {item["ip"]for sublista in lista_de_ips_permitidas for item in sublista}
+
