@@ -107,7 +107,7 @@ reglas={
             "tiempo_ultima_request":None,
             "path":"/categorias/",
             "regex":"*",
-            "ip" : "192.168.1.36",
+            "ip" : "127.0.0.1",
     
     },
 

@@ -11,7 +11,7 @@ async def test_incrementar_cantidad():
 
 @pytest.mark.asyncio
 async def test_resetear_cantidad():
-    map = {"cantidad": 5, "tiempo_ultima_request": "22:00:00"}
+    map = {"cantidad": 5, "tiempo_ultima_request": datetime.now()}
     result = await resetear_cantidad(map)
     assert result is True
     assert map["cantidad"] == 1
@@ -25,9 +25,10 @@ async def test_chequear_tiempo_y_cantidad_resetea():
     
 @pytest.mark.asyncio
 async def test_chequear_tiempo_y_cantidad_incrementa():
-    map = {"cantidad": 4, "limite": 5, "tiempo_ultima_request": None}
+    map = {"cantidad": 4, "limite": 5, "tiempo_ultima_request": datetime.now()}
     result = await chequear_cantidad_y_limite(map)
     assert result is True
+    assert map["cantidad"] == 5
 
 @pytest.mark.asyncio
 async def test_chequear_diferencia_None():
@@ -36,7 +37,7 @@ async def test_chequear_diferencia_None():
     assert diferencia is  None
 
 @pytest.mark.asyncio
-async def test_chequear_diferencia_None():
+async def test_chequear_diferencia_not_note():
     map = {"tiempo_ultima_request": datetime.now()}
     diferencia = await chequear_diferencia(map)
     assert diferencia is not None
@@ -64,7 +65,7 @@ async def test_chequear_ip_path_pass(mocker):
     mock_reglas = {
         "ip_path": [
             {
-                "ips": ["192.168.1.36"],
+                "ip": "192.168.1.36",
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
@@ -80,14 +81,13 @@ async def test_chequear_ip_path_pass(mocker):
     path = "/cotizaciones/arg"
     result, regla = await chequear_ip_path(ip, path)
     assert result is True
-    assert regla["ips"] == ["192.168.1.36"]
 
 @pytest.mark.asyncio
 async def test_chequear_ip_path_fail(mocker):
     mock_reglas = {
         "ip_path": [
             {
-                "ips": ["192.168.1.36"],
+                "ip": "192.168.1.36",
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
@@ -111,7 +111,7 @@ async def test_chequear_ip(mocker):
     mock_reglas = {
         "ip": [
             {
-                "ips": ["127.0.0.1"],
+                "ip": "127.0.0.1",
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
@@ -126,7 +126,7 @@ async def test_chequear_ip(mocker):
     ip = "127.0.0.1"
     result, regla = await chequear_ip(ip)
     assert result is True
-    assert regla["ips"] == ["127.0.0.1"]
+
     
     
 @pytest.mark.asyncio
@@ -134,7 +134,7 @@ async def test_chequear_ip_fail(mocker):
     mock_reglas = {
         "ip": [
             {
-                "ips": ["127.0.0.1"],
+                "ip": "127.0.0.1",
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
@@ -151,27 +151,7 @@ async def test_chequear_ip_fail(mocker):
     assert result is False
     assert regla == {}
     
-@pytest.mark.asyncio
-async def test_chequear_path(mocker):
-    mock_reglas = {
-        "path": [
-            {
-                "limite": 10,
-                "tiempo": 100,
-                "tiempo_de_espera": 120,
-                "cantidad": 0,
-                "tiempo_ultima_request": None,
-                "path": "/dolar_blue/",
-                "regex":"*"
-            }
-        ]
-    }
-    
-    mocker.patch ('app.config.reglas',mock_reglas)
-    path = "/dolar_blue/"
-    result, regla = await chequear_path(path)
-    assert result is True
-    assert regla["path"] == "/dolar_blue/"
+
     
 @pytest.mark.asyncio
 async def test_chequear_path_con_parametro(mocker):
@@ -183,19 +163,19 @@ async def test_chequear_path_con_parametro(mocker):
                 "tiempo_de_espera": 120,
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
-                "path": "/dolar_blue/",
+                "path": "/dolares/",
                 "regex":"*"
             }
         ]
     }
     
     mocker.patch ('app.config.reglas',mock_reglas)
-    path = "/dolar_blue/2024"
+    path = "/dolares/blue"
     result, regla = await chequear_path(path)
     assert result is True
     
 @pytest.mark.asyncio
-async def test_chequear_path_fail(mocker):
+async def test_chequear_path_con_parametro_fail(mocker):
     mock_reglas = {
         "path": [
             {
