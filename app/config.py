@@ -40,8 +40,8 @@ reglas={
             "tiempo":100,
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
-            "ip" : "127.0.0.1",
-            "path":"/",
+            "ip" : "127.",
+            "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{1}"
 
     
      },{
@@ -52,7 +52,7 @@ reglas={
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
             "ip" : "192.168.1.36",
-            "path":"/",
+            "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{2}"
 
     
  }
@@ -65,7 +65,7 @@ reglas={
             "tiempo_de_espera":90,
             "tiempo_ultima_request":None,
             "path" : "/dolares/",
-            "regex":"*",
+            "regex":r".*"
 
     
     },
@@ -77,7 +77,7 @@ reglas={
             "tiempo_de_espera":90,
             "tiempo_ultima_request":None,
             "path" : "/tipos/",
-            "regex":"*",
+            "regex":r".*"
 
     
     }
@@ -92,7 +92,7 @@ reglas={
             "tiempo_de_espera":90,
             "tiempo_ultima_request":None,
             "path":'/cotizaciones/',
-            "regex":"*",
+            "regex":r".*",
             "ip" : "192.168.1.36",
         
     
@@ -106,7 +106,7 @@ reglas={
             "tiempo_de_espera":120,
             "tiempo_ultima_request":None,
             "path":"/categorias/",
-            "regex":"*",
+            "regex":r".*",
             "ip" : "127.0.0.1",
     
     },
