@@ -67,6 +67,34 @@ async def controlar_tiempo (map:dict):
     """
 
     diferencia = await chequear_diferencia(map)
+    """
+    ip:{
+            "method": "GET",
+            "limite": 10,
+            "cantidad":0,
+            "tiempo":120,
+            "tiempo_de_espera":130,
+            "tiempo_ultima_request":None,
+            "ip" : "192.168.1.36",
+            "path":"/",
+        }
+        
+    ip_path:{
+            "method": "GET",
+            "limite": 2,
+            "cantidad":0,
+            "tiempo":200,
+            "tiempo_de_espera":90,
+            "tiempo_ultima_request":None,
+            "path":'/cotizaciones/',
+            "regex":"*",
+            "ip" : "192.168.1.36",
+        
+    
+        },
+    """
+    
+    
     
     lista_de_control = [(map["cantidad"] < map["limite"] and map["tiempo_ultima_request"] == None,incrementar_cantidad),
                         (map["cantidad"] == map["limite"],chequear_cantidad),
@@ -77,7 +105,7 @@ async def controlar_tiempo (map:dict):
     chequeos = [funcion(map) for condicion, funcion in lista_de_control if condicion]
     return await asyncio.gather(*chequeos) if chequeos else False
 
-async def chequear_ip_path (ip:str,path):
+async def chequear_ip_path (ip:str,path=""):
     """
     Proposito:
         Esta funcion se encarga de buscar la ip y el path de la consulta en las reglas de configuracion (config.py)
@@ -102,7 +130,7 @@ async def chequear_ip_path (ip:str,path):
         
     return False,{}
         
-async def chequear_ip (ip:str):
+async def chequear_ip (ip:str,path=""):
     """
     Proposito:
         Esta funcion se encarga de verificar si la ip pertenece al archivo de configuracion , ya que para una ip puede haber dos reglas
@@ -122,7 +150,7 @@ async def chequear_ip (ip:str):
             return True,reglas_ip
     return False,{}
 
-async def chequear_path (path:str):
+async def chequear_path (ip:str,path=""):
     """
     Proposito:
         Esta funcion se encarga de verificar si el path pertenece al archivo de configuracion , ya que para un path puede haber dos reglas

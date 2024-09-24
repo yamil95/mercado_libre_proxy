@@ -16,7 +16,43 @@ from app.config import endpoints,lista_de_ips_permitidas
 app = FastAPI()
 
 
+async def realizar_chequeos (ip,path):
+    
+
+    """
+    ip :{
+            "method": "GET",
+            "limite": 10,
+            "cantidad":0,
+            "tiempo":120,
+            "tiempo_de_espera":130,
+            "tiempo_ultima_request":None,
+            "ip" : "192.168.1.36",
+            "path":"/",
+        }
         
+        ip_path:{
+            "method": "GET",
+            "limite": 2,
+            "cantidad":0,
+            "tiempo":200,
+            "tiempo_de_espera":90,
+            "tiempo_ultima_request":None,
+            "path":'/cotizaciones/',
+            "regex":"*",
+            "ip" : "192.168.1.36",
+        
+    
+        },
+    """
+    lista_de_chequeos = [chequear_ip_path,chequear_ip,chequear_path]
+    resultados_chequeos = []
+    for chequeo in lista_de_chequeos:
+        resultados_chequeos.append(chequeo(ip,path))
+    
+    lista_resultados_chequeos = await asyncio.gather(*resultados_chequeos)
+    return lista_resultados_chequeos
+
 async def validar_permisos(ip:str,path:str,method:str):
     """
     Proposito:
@@ -46,36 +82,25 @@ async def validar_permisos(ip:str,path:str,method:str):
 
     Returns:
         True/False,descripcion de error : chequea si las validaciones son correctas, en el caso de que falle describe el error
-    """
-    resultado_ip_path,reglas_ip_path = await chequear_ip_path (ip,path) #chequea ip_path
-    resultado_ip,reglas_ip = await chequear_ip(ip) # chequea ip
-    resultado_path,reglas_path = await chequear_path(path) # chequea path
-    descripcion = []
+    """ 
 
-    
-    # este diccionario se utiliza para evitar la escribir muchos "if" , de esta forma el codigo es mas legible
-    validaciones = {
-        "ip_path":(resultado_ip_path,reglas_ip_path,"ip_path limitado"),
-        "ip": (resultado_ip, reglas_ip, "ip limitado"),
-        "path": (resultado_path, reglas_path, "path limitado")
-     }
-    
+    lista_resultados_chequeos = await realizar_chequeos(ip,path)
     resultados = []  
-    for k , (resultado,checks,mensaje) in validaciones.items():
+    for resultado in lista_resultados_chequeos:
         
-        if resultado: # chequea si la validacion asociada a "ip_path","ip","path" si alguna de ellas dio verdadero 
-            resultados.append (controlar_tiempo(checks)) # se la agrega a la lista de referencias a funciones para controlar el tiempo
-            descripcion.append(mensaje) # "se agrega el mensaje asociado a la validacion que se va hacer"
+        if resultado[0]: # chequea si la validacion asociada a "ip_path","ip","path" si alguna de ellas dio verdadero 
+            resultados.append (controlar_tiempo(resultado[1])) # se la agrega a la lista de referencias a funciones para controlar el tiempo
+
 
                     
     lista_await = await asyncio.gather(*resultados) # ejecuta las funciones de manera asincrona 
     lista_await_unzip = [item for sublista in lista_await for item in sublista]
     if False in lista_await_unzip: #si alguna de las funciones dio como resultado falso es porque no cumple con las reglas de validacion del config.py
-        return False,", ".join(descripcion)
+        return False
                    
                     
     else :
-        return True,descripcion # en el caso de que salga todo bien devuelve un True y la descripcion vacia, 
+        return True
 
 
 
@@ -90,13 +115,13 @@ async def rate_limit_middleware(request: Request, call_next):
 
     if client_ip in lista_de_ips_permitidas:
     #llamo a la funcion de validar permisos
-        resultado,descripcion = await validar_permisos(client_ip,path,method) #asyncio.create_task (validar_permisos(client_ip,path,method) )
+        resultado = await validar_permisos(client_ip,path,method) #asyncio.create_task (validar_permisos(client_ip,path,method) )
     
         if resultado:
             response = await call_next(request)
             return response
         else:
-            return JSONResponse(status_code=429,content= {"error":descripcion})
+            return JSONResponse(status_code=429,content= {"error":"Excedio el limite de request"})
     else:
         return JSONResponse(status_code=500,content= {"IP":"No valida"})
         
@@ -104,7 +129,7 @@ async def rate_limit_middleware(request: Request, call_next):
 
 
 def crear_endpoint_dinamicamente(url="",header={}):
-    
+ 
     async def endpoint(valor:str):
         async with httpx.AsyncClient() as client:
         
@@ -121,3 +146,4 @@ def crear_endpoint_dinamicamente(url="",header={}):
 
 for path,parametros in endpoints.items():
     app.add_api_route(path, crear_endpoint_dinamicamente(**parametros),methods=["GET"])
+    
