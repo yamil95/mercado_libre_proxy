@@ -61,9 +61,8 @@ async def test_controlar_tiempo():
     resultado == False
     
 @pytest.mark.asyncio
-async def test_chequear_ip_path_pass(mocker):
-    mock_reglas = {
-        "ip_path": [
+async def test_chequear_ip_path_pass():
+    mock_reglas =  [
             {
                 "ip": "192.168.1.36",
                 "limite": 10,
@@ -72,20 +71,19 @@ async def test_chequear_ip_path_pass(mocker):
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
                 "path": "/cotizaciones/",
-                "regex":"*"
+                "regex":r".*"
             }
         ]
-    }
-    mocker.patch('app.config.reglas', mock_reglas)
+    
+
     ip = "192.168.1.36"
     path = "/cotizaciones/arg"
-    result, regla = await chequear_ip_path(ip, path)
+    result, regla = await chequear_ip_path(ip=ip, path=path,reglas=mock_reglas)
     assert result is True
 
 @pytest.mark.asyncio
-async def test_chequear_ip_path_fail(mocker):
-    mock_reglas = {
-        "ip_path": [
+async def test_chequear_ip_path_fail():
+    mock_reglas = [
             {
                 "ip": "192.168.1.36",
                 "limite": 10,
@@ -97,87 +95,81 @@ async def test_chequear_ip_path_fail(mocker):
                 "regex":"*"
             }
         ]
-    }
-    mocker.patch('app.config.reglas', mock_reglas)
+    
+
     ip = "192.168.1.40"
     path = "/cotizac/arg"
-    result, regla = await chequear_ip_path(ip, path)
+    result, regla = await chequear_ip_path(ip=ip, path=path,reglas=mock_reglas)
     assert result is False
     assert regla == {}
 
 @pytest.mark.asyncio
-async def test_chequear_ip(mocker):
+async def test_chequear_ip():
     
-    mock_reglas = {
-        "ip": [
+    mock_reglas = [
             {
-                "ip": "127.0.0.1",
+                
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
-                "path": "/",
+                "ip": "127.",
+                "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{1}"
             }
         ]
-    }
     
-    mocker.patch ('app.config.reglas',mock_reglas)
+    
     ip = "127.0.0.1"
-    result, regla = await chequear_ip(ip)
+    result, regla = await chequear_ip(ip=ip,reglas=mock_reglas)
     assert result is True
 
     
     
 @pytest.mark.asyncio
-async def test_chequear_ip_fail(mocker):
-    mock_reglas = {
-        "ip": [
+async def test_chequear_ip_fail():
+    mock_reglas = [
             {
-                "ip": "127.0.0.1",
+                
                 "limite": 10,
                 "tiempo": 100,
                 "tiempo_de_espera": 120,
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
-                "path": "/",
+                "ip": "127.",
+                "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{1}"
             }
         ]
-    }
     
-    mocker.patch ('app.config.reglas',mock_reglas)
-    ip = "127.0.1"
-    result, regla = await chequear_ip(ip)
+    ip = "127.10.1.1"
+    result, regla = await chequear_ip(ip=ip,reglas=mock_reglas)
     assert result is False
     assert regla == {}
     
 
     
 @pytest.mark.asyncio
-async def test_chequear_path_con_parametro(mocker):
-    mock_reglas = {
-        "path": [
+async def test_chequear_path_con_parametro():
+    mock_reglas =[
             {
-                "limite": 10,
-                "tiempo": 100,
-                "tiempo_de_espera": 120,
+                "limite": 14,
+                "tiempo": 60,
+                "tiempo_de_espera": 10,
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
                 "path": "/dolares/",
-                "regex":"*"
+                "regex":r".*"
             }
         ]
-    }
     
-    mocker.patch ('app.config.reglas',mock_reglas)
+    
     path = "/dolares/blue"
-    result, regla = await chequear_path(path)
+    result, regla = await chequear_path(path=path,reglas=mock_reglas)
     assert result is True
     
 @pytest.mark.asyncio
-async def test_chequear_path_con_parametro_fail(mocker):
-    mock_reglas = {
-        "path": [
+async def test_chequear_path_con_parametro_fail():
+    mock_reglas = [
             {
                 "limite": 10,
                 "tiempo": 100,
@@ -185,12 +177,11 @@ async def test_chequear_path_con_parametro_fail(mocker):
                 "cantidad": 0,
                 "tiempo_ultima_request": None,
                 "path": "/dolar_blue/",
-                "regex":"*"
+                "regex":r".*"
             }
         ]
-    }
     
-    mocker.patch ('app.config.reglas',mock_reglas)
+    
     path = "/dolar_mep/2024"
-    result, regla = await chequear_path(path)
+    result, regla = await chequear_path(path=path,reglas=mock_reglas)
     assert result is False

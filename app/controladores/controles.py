@@ -1,6 +1,5 @@
 
 from datetime import datetime
-from app.config import reglas
 import re
 import asyncio
 
@@ -105,7 +104,7 @@ async def controlar_tiempo (map:dict):
     chequeos = [funcion(map) for condicion, funcion in lista_de_control if condicion]
     return await asyncio.gather(*chequeos) if chequeos else False
 
-async def chequear_ip_path (ip:str,path=""):
+async def chequear_ip_path (ip="",path="",reglas={}):
     """
     Proposito:
         Esta funcion se encarga de buscar la ip y el path de la consulta en las reglas de configuracion (config.py)
@@ -118,19 +117,18 @@ async def chequear_ip_path (ip:str,path=""):
     Returns:
         True,dict or False,dict:  
     """
-    for reglas_de_validacion in reglas["ip_path"]:
+    for reglas_de_validacion in reglas:
         
         path_regla=reglas_de_validacion["path"]
         regex= reglas_de_validacion["regex"]
         patron = path_regla+regex
-        patron = re.compile(patron)
-        match_path = patron.match(path)
+        match_path = re.match(patron,path)
         if ip == reglas_de_validacion["ip"] and match_path != None:
             return True,reglas_de_validacion
         
     return False,{}
         
-async def chequear_ip (ip:str,path=""):
+async def chequear_ip (ip="",path="",reglas={}):
     """
     Proposito:
         Esta funcion se encarga de verificar si la ip pertenece al archivo de configuracion , ya que para una ip puede haber dos reglas
@@ -145,12 +143,14 @@ async def chequear_ip (ip:str,path=""):
     Returns:
         True,dict o False,dict : en caso valido retorna el diccionario de configuracion asociado a la ip que esta en el config.py
     """
-    for reglas_ip in reglas["ip"]:
-        if ip == reglas_ip["ip"]:
+    for reglas_ip in reglas:
+        patron = f"{reglas_ip['ip']}{reglas_ip['regex']}"
+        resultado = re.match(patron,ip)
+        if resultado is not None:
             return True,reglas_ip
     return False,{}
 
-async def chequear_path (ip:str,path=""):
+async def chequear_path (ip="",path="",reglas={}):
     """
     Proposito:
         Esta funcion se encarga de verificar si el path pertenece al archivo de configuracion , ya que para un path puede haber dos reglas
@@ -165,10 +165,9 @@ async def chequear_path (ip:str,path=""):
     Returns:
         True,dict o False,dict : en caso valido retorna el diccionario de configuracion asociado al path que esta en el config.py
     """
-    for reglas_path in reglas["path"]:
+    for reglas_path in reglas:
         patron_path = reglas_path["path"] + reglas_path["regex"]
-        patron = re.compile(patron_path)
-        match_patron = patron.match(path)
+        match_patron = re.match(patron_path,path)
         if match_patron != None:
             return True,reglas_path
     return False,{}
