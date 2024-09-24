@@ -31,7 +31,8 @@ El proxy asegura que cualquier intento de exceder las reglas definidas resulte e
 ## Estructura del Repositorio
 
 - `config.py/`: Contiene la lógica principal del proxy, incluyendo las reglas de limitación y el manejo de las solicitudes entrantes.
-- `controles/controles.py`: Contiene las funciones para hacer los distintos chequeos por ip , path o combinacion (ip,path)
+- `controladores/control_tiempo.py`: funciones para ir llevando el control de la cantidad de request en un intervalo de tiempo se hicieron
+- `controladores/check_reglas.py`: funciones para hacer los distintos chequeos por ip , path o combinacion (ip,path)
 - `requirements.txt`: Lista de dependencias del proyecto.
 - `app/main.py`: Contiene los endpoints para las redirecciones a las apis.
 - `app/test`: Contiene los tests unitarios de cada funcion validadora .
@@ -59,7 +60,7 @@ Para poner en marcha el proxy, sigue los siguientes pasos:
 
 4. Ejecuta el proxy con FastAPI:
     ```sh
-    uvicorn api_proxy.main:app --reload
+    uvicorn app.main:app --host 0.0.0.0 --reload
     ```
 
 5. Acceda la lista de endpoints disponibles `http://localhost:8000/docs`.
@@ -77,22 +78,34 @@ Una vez que el proxy esté en funcionamiento, puedes probar los endpoints realiz
 
 - **Prueba con API Dolar**:
     ```sh
-    curl http://127.0.0.1:8000/dolar_mep/
+    curl http://127.0.0.1:8000/dolares/bolsa
     ```
     Esto redirige la solicitud a "https://dolarapi.com/v1/dolares/bolsa".
 
-- **Prueba con API de Dólar**:
+- **Prueba con API Dólar**:
     ```sh
-    curl http://127.0.0.1:8000/dolar_blue
+    curl http://127.0.0.1:8000/dolares/blue
     ```
 Esto redirige la solicitud a "https://dolarapi.com/v1/dolares/blue".
 
-- **Prueba con API argentina.datos**:
+- **Prueba con API Dólar**:
     ```sh
-    curl http://192.168.1.43:8000/categorias/{MLA3530}
+    curl http://127.0.0.1:8000/cotizaciones/eur
     ```
-Esto redirige la solicitud a ""https://api.argentinadatos.com/v1/feriados/2024".
+Esto redirige la solicitud a "https://dolarapi.com/v1/cotizaciones/eur".
+
+- **Prueba con API MercadoLibre Categorias**:
+    ```sh
+    curl http://127.0.0.1:8000/categorias/MLA3530
+    ```
+Esto redirige la solicitud a "https://api.mercadolibre.com/categories/MLA3530".
+
+- **Prueba con API MercadoLibre Tipos**:
+    ```sh
+    curl http://127.0.0.1:8000/tipos/gold_special
+    ```
+Esto redirige la solicitud a "https://api.mercadolibre.com/sites/MLA/listing_types/gold_special".
 
 
 
-El proxy verificará las reglas de rate-limiting configuradas antes de permitir que las solicitudes sean redirigidas a los endpoints originales.
+El proxy verificará que la ip este permitida y las reglas de rate-limiting configuradas a la ip , al path o al conjunto (ip,path) antes de permitir que las solicitudes sean redirigidas a los endpoints originales.
