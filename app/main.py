@@ -1,10 +1,10 @@
 import httpx
 import asyncio
-from app.controladores.controles import (
-    chequear_ip_path,
+from app.controladores.control_tiempo import controlar_tiempo
+from app.controladores.check_reglas import (
     chequear_ip,
-    chequear_path,
-    controlar_tiempo
+    chequear_ip_path,
+    chequear_path
 )
 from fastapi import FastAPI, Request,HTTPException
 from fastapi.responses import JSONResponse
@@ -16,34 +16,7 @@ app = FastAPI()
 
 
 async def realizar_chequeos (ip,path):
-    
 
-    """
-    ip :{
-            "method": "GET",
-            "limite": 10,
-            "cantidad":0,
-            "tiempo":120,
-            "tiempo_de_espera":130,
-            "tiempo_ultima_request":None,
-            "ip" : "192.168.1.36",
-            "path":"/",
-        }
-        
-        ip_path:{
-            "method": "GET",
-            "limite": 2,
-            "cantidad":0,
-            "tiempo":200,
-            "tiempo_de_espera":90,
-            "tiempo_ultima_request":None,
-            "path":'/cotizaciones/',
-            "regex":"*",
-            "ip" : "192.168.1.36",
-        
-    
-        },
-    """
     lista_de_chequeos = [(chequear_ip_path,reglas["ip_path"]),(chequear_ip,reglas["ip"]),(chequear_path,reglas["path"])]
     resultados_chequeos = []
     for chequeo,reglas_chequeo in lista_de_chequeos:

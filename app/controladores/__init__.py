@@ -1,1 +1,1 @@
-from . import controles
+from . import control_tiempo

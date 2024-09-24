@@ -40,8 +40,8 @@ reglas={
             "tiempo":100,
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
-            "ip" : "127.",
-            "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{1}"
+            "ip" : "127.0.0.1",
+
 
     
      },{
@@ -52,7 +52,7 @@ reglas={
             "tiempo_de_espera":130,
             "tiempo_ultima_request":None,
             "ip" : "192.168.1.36",
-            "regex": r"[0-9]{1}\.[0-9]{1}\.[0-9]{2}"
+
 
     
  }
