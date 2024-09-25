@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse
 from fastapi import Request, HTTPException
 from app.config import endpoints,lista_de_ips_permitidas,reglas
+from datetime import datetime
 
 app = FastAPI()
 
@@ -61,7 +62,7 @@ async def validar_permisos(ip:str,path:str,method:str):
     for resultado in lista_resultados_chequeos:
         
         if resultado[0]: # chequea si la validacion asociada a "ip_path","ip","path" si alguna de ellas dio verdadero 
-            resultados.append (controlar_tiempo(resultado[1])) # se la agrega a la lista de referencias a funciones para controlar el tiempo
+            resultados.append (controlar_tiempo(resultado[1],datetime.now())) # se la agrega a la lista de referencias a funciones para controlar el tiempo
 
 
                     

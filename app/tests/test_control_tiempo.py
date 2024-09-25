@@ -37,26 +37,26 @@ async def test_chequear_diferencia_None():
     assert diferencia is  None
 
 @pytest.mark.asyncio
-async def test_chequear_diferencia_not_note():
+async def test_chequear_diferencia_not_None():
     map = {"tiempo_ultima_request": datetime.now()}
-    diferencia = await chequear_diferencia(map)
+    diferencia = await chequear_diferencia(map,datetime.now())
     assert diferencia is not None
     
 @pytest.mark.asyncio
-async def test_controlar_tiempo():
+async def test_controlar_tiempo_cantidad_menor():
     map = {"cantidad": 1, "limite": 3, "tiempo_ultima_request": None, "tiempo": 60}
-    await controlar_tiempo(map)
+    await controlar_tiempo(map,datetime.now())
     assert map["cantidad"] == 2
 
 @pytest.mark.asyncio
-async def test_controlar_tiempo():
+async def test_controlar_tiempo_cantidad_igual_diferencia_mayor():
     map = {"cantidad": 3, "limite": 3, "tiempo_ultima_request": datetime.now()+timedelta(seconds=50), "tiempo": 60,"tiempo_de_espera":40}
-    resultado = await controlar_tiempo(map)
-    assert resultado  == True
+    resultado = await controlar_tiempo(map,datetime.now())
+    assert map["cantidad"] == 1
     
 @pytest.mark.asyncio
-async def test_controlar_tiempo():
-    map = {"cantidad": 3, "limite": 3, "tiempo_ultima_request": datetime.now()-timedelta(seconds=1), "tiempo": 60,"tiempo_de_espera":40}
-    resultado = await controlar_tiempo(map)
+async def test_controlar_tiempo_cantida_igual_diferencia_menor():
+    map = {"cantidad": 3, "limite": 3, "tiempo_ultima_request": datetime.now()-timedelta(seconds=10), "tiempo": 60,"tiempo_de_espera":40}
+    resultado = await controlar_tiempo(map,datetime.now())
     resultado == False
  

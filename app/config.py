@@ -35,10 +35,10 @@ endpoints= {
 reglas={
     "ip":[{
             "method": "GET",
-            "limite": 15,
+            "limite": 11,
             "cantidad":0,
-            "tiempo":100,
-            "tiempo_de_espera":130,
+            "tiempo":60,
+            "tiempo_de_espera":30,
             "tiempo_ultima_request":None,
             "ip" : "127.0.0.1",
 
@@ -46,10 +46,10 @@ reglas={
     
      },{
             "method": "GET",
-            "limite": 10,
+            "limite": 11,
             "cantidad":0,
-            "tiempo":120,
-            "tiempo_de_espera":130,
+            "tiempo":60,
+            "tiempo_de_espera":30,
             "tiempo_ultima_request":None,
             "ip" : "192.168.1.36",
 
@@ -59,10 +59,10 @@ reglas={
     ],
 "path":[{
             "method": "GET",
-            "limite": 11,
+            "limite": 5,
             "cantidad":0,
             "tiempo":60,
-            "tiempo_de_espera":90,
+            "tiempo_de_espera":15,
             "tiempo_ultima_request":None,
             "path" : "/dolares/",
             "regex":r".*"
@@ -71,10 +71,10 @@ reglas={
     },
         {
             "method": "GET",
-            "limite": 8,
+            "limite": 5,
             "cantidad":0,
             "tiempo":60,
-            "tiempo_de_espera":90,
+            "tiempo_de_espera":15,
             "tiempo_ultima_request":None,
             "path" : "/tipos/",
             "regex":r".*"
@@ -88,8 +88,8 @@ reglas={
             "method": "GET",
             "limite": 2,
             "cantidad":0,
-            "tiempo":200,
-            "tiempo_de_espera":90,
+            "tiempo":60,
+            "tiempo_de_espera":8,
             "tiempo_ultima_request":None,
             "path":'/cotizaciones/',
             "regex":r".*",
@@ -100,10 +100,10 @@ reglas={
     
         {
             "method": "GET",
-            "limite": 5,
+            "limite": 2,
             "cantidad":0,
-            "tiempo":100,
-            "tiempo_de_espera":120,
+            "tiempo":60,
+            "tiempo_de_espera":8,
             "tiempo_ultima_request":None,
             "path":"/categorias/",
             "regex":r".*",
